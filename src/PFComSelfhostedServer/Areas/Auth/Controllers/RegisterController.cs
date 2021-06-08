@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PFComSelfhostedServer.Areas.Auth.Models.ReqModels;
 using PFComSelfhostedServer.Areas.Auth.Models.ResModels;
-using PFComSelfhostedServer.Data.Database;
 using PFComSelfhostedServer.Services.Users;
-using System;
 
 namespace PFComSelfhostedServer.Areas.Auth.Controllers
 {
@@ -20,9 +18,15 @@ namespace PFComSelfhostedServer.Areas.Auth.Controllers
         /// </summary>
         private UserRegisterer userRegisterer;
 
-        public RegisterController(UserRegisterer userRegisterer)
+        /// <summary>
+        /// A service for checking nickname.
+        /// </summary>
+        private UserNameValidator nickValidator;
+
+        public RegisterController(UserRegisterer userRegisterer, UserNameValidator nickValidator)
         {
             this.userRegisterer = userRegisterer; // Injects a dependency.
+            this.nickValidator = nickValidator; // Injects a dependency.
         }
 
         /// <summary>
@@ -33,6 +37,11 @@ namespace PFComSelfhostedServer.Areas.Auth.Controllers
         [HttpPost]
         public object Post(RegisterReqModel req)
         {
+            if(!this.nickValidator.IsValid(req.Nickname))
+            {
+                return BadRequest("An user with the nickname already exists.");
+            }
+
             return new RegisterResModel()
             {
                 ID = this.userRegisterer.Register(req.Nickname, req.Password)

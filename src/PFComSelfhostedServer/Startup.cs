@@ -51,6 +51,7 @@ namespace PFComSelfhostedServer
             services.AddScoped<LocalSessionRegisterer>();
             services.AddScoped<LocalSessionRegisterer>();
             services.AddScoped<SessionValidator>();
+            services.AddScoped<UserNameValidator>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
